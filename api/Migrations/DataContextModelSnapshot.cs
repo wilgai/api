@@ -43,13 +43,13 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("nombre");
+                    b.Property<string>("nombre")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
                     b.HasIndex("nombre")
-                        .IsUnique()
-                        .HasFilter("[nombre] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -125,7 +125,7 @@ namespace api.Migrations
 
                     b.Property<string>("web");
 
-                    b.Property<int>("whatsap");
+                    b.Property<string>("whatsap");
 
                     b.HasKey("Id");
 
@@ -134,19 +134,18 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Entities.Inventory", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<int>("Cantidad");
-
-                    b.Property<decimal>("Descuento");
 
                     b.Property<DateTime>("Fecha");
 
                     b.Property<decimal>("Ganancia");
 
-                    b.Property<int?>("IdProductoId");
+                    b.Property<decimal>("Itbis");
+
+                    b.Property<string>("OrderNumber");
 
                     b.Property<decimal>("PorcientoDescuento");
 
@@ -154,9 +153,11 @@ namespace api.Migrations
 
                     b.Property<decimal>("PrecioVenta");
 
+                    b.Property<int>("ProductId");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("IdProductoId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Inventories");
                 });
@@ -167,13 +168,15 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("marca");
+                    b.Property<int>("brandId");
 
                     b.Property<string>("nombre")
                         .IsRequired()
                         .HasMaxLength(50);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("brandId");
 
                     b.HasIndex("nombre")
                         .IsUnique();
@@ -189,13 +192,13 @@ namespace api.Migrations
 
                     b.Property<string>("OrderNumber");
 
-                    b.Property<int?>("codigoClienteId");
+                    b.Property<int?>("codigoCliente");
 
                     b.Property<decimal>("descuento");
 
                     b.Property<string>("detalle");
 
-                    b.Property<int>("estado");
+                    b.Property<string>("estado");
 
                     b.Property<DateTime>("fecha");
 
@@ -207,7 +210,7 @@ namespace api.Migrations
 
                     b.Property<string>("referencia");
 
-                    b.Property<int>("suplidor");
+                    b.Property<int?>("suplidor");
 
                     b.Property<string>("tipoDocumento");
 
@@ -215,13 +218,19 @@ namespace api.Migrations
 
                     b.Property<decimal>("totaln");
 
-                    b.Property<string>("usuario_registroId");
+                    b.Property<string>("usuario_registro");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("codigoClienteId");
+                    b.HasIndex("OrderNumber")
+                        .IsUnique()
+                        .HasFilter("[OrderNumber] IS NOT NULL");
 
-                    b.HasIndex("usuario_registroId");
+                    b.HasIndex("codigoCliente");
+
+                    b.HasIndex("suplidor");
+
+                    b.HasIndex("usuario_registro");
 
                     b.ToTable("Orders");
                 });
@@ -232,25 +241,29 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("IdInventario");
+                    b.Property<int?>("OrderID");
 
-                    b.Property<int?>("OrderId");
+                    b.Property<decimal>("PrecioVenta");
 
                     b.Property<int>("cantidad");
 
-                    b.Property<int?>("codigo_articuloId");
+                    b.Property<int>("codigo_articulo");
+
+                    b.Property<string>("idFactura");
+
+                    b.Property<string>("idInventario");
 
                     b.Property<decimal>("itbis");
-
-                    b.Property<decimal>("precio");
 
                     b.Property<string>("referencia");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrderID");
 
-                    b.HasIndex("codigo_articuloId");
+                    b.HasIndex("codigo_articulo");
+
+                    b.HasIndex("idInventario");
 
                     b.ToTable("Order_Details");
                 });
@@ -261,19 +274,21 @@ namespace api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Activo");
+
+                    b.Property<int>("BrandId");
+
+                    b.Property<int>("CategoryId");
+
+                    b.Property<int>("ModelId");
+
+                    b.Property<int>("ProviderId");
+
                     b.Property<bool>("acepta_descuento");
 
                     b.Property<string>("codigo");
 
-                    b.Property<int?>("codigo_categoriaId");
-
-                    b.Property<int?>("codigo_marcaId");
-
-                    b.Property<int?>("codigo_suplidorId");
-
                     b.Property<string>("detalle");
-
-                    b.Property<bool>("estado");
 
                     b.Property<DateTime>("fecha_actualizacion");
 
@@ -282,8 +297,6 @@ namespace api.Migrations
                     b.Property<string>("foto");
 
                     b.Property<int>("garantia");
-
-                    b.Property<int?>("modeloId");
 
                     b.Property<bool>("modificar_precio");
 
@@ -303,17 +316,17 @@ namespace api.Migrations
 
                     b.Property<string>("tipo_impuesto");
 
-                    b.Property<int>("usuario_registro");
+                    b.Property<string>("usuario_registro");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("codigo_categoriaId");
+                    b.HasIndex("BrandId");
 
-                    b.HasIndex("codigo_marcaId");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("codigo_suplidorId");
+                    b.HasIndex("ModelId");
 
-                    b.HasIndex("modeloId");
+                    b.HasIndex("ProviderId");
 
                     b.HasIndex("nombre")
                         .IsUnique();
@@ -361,11 +374,12 @@ namespace api.Migrations
 
                     b.Property<string>("accesorios");
 
-                    b.Property<string>("averia");
+                    b.Property<string>("averia")
+                        .IsRequired();
 
                     b.Property<string>("categoria");
 
-                    b.Property<int?>("codigoClienteId");
+                    b.Property<int>("codigoCliente");
 
                     b.Property<string>("color");
 
@@ -378,8 +392,7 @@ namespace api.Migrations
 
                     b.Property<string>("estado");
 
-                    b.Property<string>("fallaTecnica")
-                        .IsRequired();
+                    b.Property<string>("fallaTecnica");
 
                     b.Property<DateTime>("fecha");
 
@@ -388,7 +401,7 @@ namespace api.Migrations
 
                     b.Property<string>("repuesto");
 
-                    b.Property<string>("resgistradoPorId");
+                    b.Property<string>("resgistradoPor");
 
                     b.Property<string>("serie");
 
@@ -398,9 +411,9 @@ namespace api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("codigoClienteId");
+                    b.HasIndex("codigoCliente");
 
-                    b.HasIndex("resgistradoPorId");
+                    b.HasIndex("resgistradoPor");
 
                     b.ToTable("Repairs");
                 });
@@ -450,7 +463,7 @@ namespace api.Migrations
                     b.Property<string>("direccion")
                         .HasMaxLength(100);
 
-                    b.Property<string>("estado");
+                    b.Property<bool>("estado");
 
                     b.Property<string>("foto");
 
@@ -464,7 +477,7 @@ namespace api.Migrations
 
                     b.Property<string>("sexo");
 
-                    b.Property<int>("tipo_usuario");
+                    b.Property<string>("tipo_usuario");
 
                     b.HasKey("Id");
 
@@ -591,61 +604,90 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Entities.Inventory", b =>
                 {
-                    b.HasOne("api.Entities.Product", "IdProducto")
+                    b.HasOne("api.Entities.Product", "Producto")
                         .WithMany()
-                        .HasForeignKey("IdProductoId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("api.Entities.Model", b =>
+                {
+                    b.HasOne("api.Entities.Brand", "Brand")
+                        .WithMany()
+                        .HasForeignKey("brandId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("api.Entities.Order", b =>
                 {
-                    b.HasOne("api.Entities.Client", "codigoCliente")
+                    b.HasOne("api.Entities.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("codigoClienteId");
+                        .HasForeignKey("codigoCliente")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.User", "usuario_registro")
+                    b.HasOne("api.Entities.Provider", "Provider")
                         .WithMany()
-                        .HasForeignKey("usuario_registroId");
+                        .HasForeignKey("suplidor")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("usuario_registro")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("api.Entities.Order_Detail", b =>
                 {
-                    b.HasOne("api.Entities.Order")
+                    b.HasOne("api.Entities.Order", "Order")
                         .WithMany("Order_Details")
-                        .HasForeignKey("OrderId");
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.Product", "codigo_articulo")
+                    b.HasOne("api.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("codigo_articuloId");
+                        .HasForeignKey("codigo_articulo")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("api.Entities.Inventory", "Inventory")
+                        .WithMany()
+                        .HasForeignKey("idInventario")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("api.Entities.Product", b =>
                 {
-                    b.HasOne("api.Entities.Category", "codigo_categoria")
+                    b.HasOne("api.Entities.Brand", "Brand")
                         .WithMany()
-                        .HasForeignKey("codigo_categoriaId");
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.Brand", "codigo_marca")
+                    b.HasOne("api.Entities.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("codigo_marcaId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.Provider", "codigo_suplidor")
+                    b.HasOne("api.Entities.Model", "Model")
                         .WithMany()
-                        .HasForeignKey("codigo_suplidorId");
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.Model", "modelo")
+                    b.HasOne("api.Entities.Provider", "Provider")
                         .WithMany()
-                        .HasForeignKey("modeloId");
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("api.Entities.Repair", b =>
                 {
-                    b.HasOne("api.Entities.Client", "codigoCliente")
+                    b.HasOne("api.Entities.Client", "Cliente")
                         .WithMany()
-                        .HasForeignKey("codigoClienteId");
+                        .HasForeignKey("codigoCliente")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("api.Entities.User", "resgistradoPor")
+                    b.HasOne("api.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("resgistradoPorId");
+                        .HasForeignKey("resgistradoPor")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

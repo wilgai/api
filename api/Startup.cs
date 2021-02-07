@@ -103,6 +103,13 @@ namespace api
             //    SupportedUICultures = new[] { new CultureInfo("en-US") }
             //});
 
+            app.UseCors(x => x
+             .AllowAnyMethod()
+             .AllowAnyHeader()
+             .SetIsOriginAllowed(origin=>true)
+             .AllowCredentials()
+            );
+
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 

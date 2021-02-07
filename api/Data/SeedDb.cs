@@ -23,7 +23,7 @@ namespace api.Data
             await _context.Database.EnsureCreatedAsync();
 
             await CheckRolesAsync();
-            await CheckUserAsync("00000000000", "Admin", "Admin", "lorimerwilgay23@gmail.com","admin", "322 311 4620", "Santo Domingo","","Hombre","Activo", UserType.Admin);
+            await CheckUserAsync("00000000000", "Admin", "Admin", "lorimerwilgay23@gmail.com","admin", "0000000000", "Santo Domingo","","Hombre",true, "Admin");
         }
 
         private async Task CheckRolesAsync()
@@ -42,8 +42,8 @@ namespace api.Data
         string direccion,
         string foto,
         string sexo,
-        string estado,
-        UserType tipo_usuario
+        bool estado,
+        string tipo_usuario
             )
         {
             User user = await _userHelper.GetUserAsync(correo);

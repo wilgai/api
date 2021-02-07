@@ -1,7 +1,7 @@
 ﻿using api.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
+using System.Linq;
 
 namespace api.Data
 {
@@ -33,6 +33,10 @@ namespace api.Data
         public DbSet<Client> Clients { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                relationship.DeleteBehavior = DeleteBehavior.Restrict;
+            }
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Category>()
@@ -53,6 +57,10 @@ namespace api.Data
 
             modelBuilder.Entity<Model>()
                .HasIndex(t => t.nombre)
+               .IsUnique();
+
+            modelBuilder.Entity<Order>()
+               .HasIndex(t => t.OrderNumber)
                .IsUnique();
 
 

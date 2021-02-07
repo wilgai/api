@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace api.Entities
+namespace api.Request
 {
-    public class Category
+    public class UserNameRequest
     {
-        public int Id { get; set; }
+        
         [Required]
-        public string nombre { get; set; }
+        public string userName { get; set; }
     }
 }

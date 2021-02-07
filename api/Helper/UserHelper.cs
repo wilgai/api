@@ -47,7 +47,13 @@ namespace api.Helper
             }
         }
 
-        public async Task<User> GetUserAsync(string email)
+        public async Task<User> GetUserAsync(string userName)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName);
+        }
+
+        public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);

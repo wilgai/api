@@ -8,7 +8,7 @@ namespace api.Request
 {
     public class UserRequest
     {
-        
+        public string id { get; set; }
         [Required]
         public string identificacion { get; set; }
 
@@ -19,18 +19,18 @@ namespace api.Request
         public string apellidos { get; set; }
 
         [Required]
-        public string correo { get; set; }
+        public string email { get; set; }
 
         [Required]
         public string direccion { get; set; }
 
         [Required]
-        public string telefono { get; set; }
+        public string phoneNumber { get; set; }
         [Required]
-        public string usuario { get; set; }
+        public string userName { get; set; }
 
         [Required]
-        public string contresana { get; set; }
+        public string passwordHash { get; set; }
 
         public string foto { get; set; }
 
@@ -38,7 +38,8 @@ namespace api.Request
         public string sexo { get; set; }
 
         [Required]
-        public string estado { get; set; }
+        public bool estado { get; set; }
+        public string tipo_usuario { get; set; }
 
 
     }

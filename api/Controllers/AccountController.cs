@@ -74,7 +74,7 @@ namespace api.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = await _userHelper.GetUserAsync(model.Email);
+                User user = await _userHelper.GetUserByEmailAsync(model.Email);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "The email doesn't correspont to a registered user.");
@@ -105,7 +105,7 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            User user = await _userHelper.GetUserAsync(model.UserName);
+            User user = await _userHelper.GetUserByEmailAsync(model.UserName);
             if (user != null)
             {
                 IdentityResult result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);

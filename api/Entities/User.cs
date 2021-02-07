@@ -32,10 +32,10 @@ namespace api.Entities
 
         public string sexo { get; set; }
 
-        public string estado { get; set; }
+        public bool estado { get; set; }
         
 
-        public UserType tipo_usuario { get; set; }
+        public string tipo_usuario { get; set; }
 
       
         public string FullName => $"{nombre} {apellidos}";

@@ -47,8 +47,8 @@ namespace api.Migrations
                     direccion = table.Column<string>(maxLength: 100, nullable: true),
                     foto = table.Column<string>(nullable: true),
                     sexo = table.Column<string>(nullable: true),
-                    estado = table.Column<string>(nullable: true),
-                    tipo_usuario = table.Column<int>(nullable: false)
+                    estado = table.Column<bool>(nullable: false),
+                    tipo_usuario = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -74,7 +74,7 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    nombre = table.Column<string>(nullable: true)
+                    nombre = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,7 +111,7 @@ namespace api.Migrations
                     correo = table.Column<string>(nullable: true),
                     telefono = table.Column<string>(nullable: true),
                     celular = table.Column<string>(nullable: true),
-                    whatsap = table.Column<int>(nullable: false),
+                    whatsap = table.Column<string>(nullable: true),
                     facebook = table.Column<string>(nullable: true),
                     instagram = table.Column<string>(nullable: true),
                     tiktok = table.Column<string>(nullable: true),
@@ -128,20 +128,6 @@ namespace api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Configurations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Models",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    nombre = table.Column<string>(maxLength: 50, nullable: false),
-                    marca = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Models", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -271,40 +257,21 @@ namespace api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "Models",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    usuario_registroId = table.Column<string>(nullable: true),
-                    tipoDocumento = table.Column<string>(nullable: true),
-                    codigoClienteId = table.Column<int>(nullable: true),
-                    ncf = table.Column<string>(nullable: true),
-                    referencia = table.Column<string>(nullable: true),
-                    descuento = table.Column<decimal>(nullable: false),
-                    detalle = table.Column<string>(nullable: true),
-                    estado = table.Column<int>(nullable: false),
-                    totaln = table.Column<decimal>(nullable: false),
-                    itbistot = table.Column<decimal>(nullable: false),
-                    fecha = table.Column<DateTime>(nullable: false),
-                    OrderNumber = table.Column<string>(nullable: true),
-                    metPago = table.Column<string>(nullable: true),
-                    tipoFactura = table.Column<string>(nullable: true),
-                    suplidor = table.Column<int>(nullable: false)
+                    nombre = table.Column<string>(maxLength: 50, nullable: false),
+                    brandId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_Models", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_Clients_codigoClienteId",
-                        column: x => x.codigoClienteId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_usuario_registroId",
-                        column: x => x.usuario_registroId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_Models_Brands_brandId",
+                        column: x => x.brandId,
+                        principalTable: "Brands",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -316,8 +283,8 @@ namespace api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     numero = table.Column<string>(nullable: false),
-                    codigoClienteId = table.Column<int>(nullable: true),
-                    resgistradoPorId = table.Column<string>(nullable: true),
+                    codigoCliente = table.Column<int>(nullable: false),
+                    resgistradoPor = table.Column<string>(nullable: true),
                     detalle = table.Column<string>(nullable: true),
                     total = table.Column<decimal>(nullable: false),
                     fecha = table.Column<DateTime>(nullable: false),
@@ -328,8 +295,8 @@ namespace api.Migrations
                     color = table.Column<string>(nullable: true),
                     trajoAccesorio = table.Column<bool>(nullable: false),
                     accesorios = table.Column<string>(nullable: true),
-                    averia = table.Column<string>(nullable: true),
-                    fallaTecnica = table.Column<string>(nullable: false),
+                    averia = table.Column<string>(nullable: false),
+                    fallaTecnica = table.Column<string>(nullable: true),
                     costoPieza = table.Column<decimal>(nullable: false),
                     repuesto = table.Column<string>(nullable: true)
                 },
@@ -337,14 +304,59 @@ namespace api.Migrations
                 {
                     table.PrimaryKey("PK_Repairs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Repairs_Clients_codigoClienteId",
-                        column: x => x.codigoClienteId,
+                        name: "FK_Repairs_Clients_codigoCliente",
+                        column: x => x.codigoCliente,
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Repairs_AspNetUsers_resgistradoPorId",
-                        column: x => x.resgistradoPorId,
+                        name: "FK_Repairs_AspNetUsers_resgistradoPor",
+                        column: x => x.resgistradoPor,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    usuario_registro = table.Column<string>(nullable: true),
+                    tipoDocumento = table.Column<string>(nullable: true),
+                    codigoCliente = table.Column<int>(nullable: true),
+                    suplidor = table.Column<int>(nullable: true),
+                    ncf = table.Column<string>(nullable: true),
+                    referencia = table.Column<string>(nullable: true),
+                    descuento = table.Column<decimal>(nullable: false),
+                    detalle = table.Column<string>(nullable: true),
+                    estado = table.Column<string>(nullable: true),
+                    totaln = table.Column<decimal>(nullable: false),
+                    itbistot = table.Column<decimal>(nullable: false),
+                    fecha = table.Column<DateTime>(nullable: false),
+                    OrderNumber = table.Column<string>(nullable: true),
+                    metPago = table.Column<string>(nullable: true),
+                    tipoFactura = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Clients_codigoCliente",
+                        column: x => x.codigoCliente,
+                        principalTable: "Clients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_Providers_suplidor",
+                        column: x => x.suplidor,
+                        principalTable: "Providers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_usuario_registro",
+                        column: x => x.usuario_registro,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -357,13 +369,13 @@ namespace api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     nombre = table.Column<string>(maxLength: 50, nullable: false),
-                    codigo_suplidorId = table.Column<int>(nullable: true),
-                    usuario_registro = table.Column<int>(nullable: false),
+                    ProviderId = table.Column<int>(nullable: false),
+                    usuario_registro = table.Column<string>(nullable: true),
                     fecha_registro = table.Column<DateTime>(nullable: false),
                     fecha_actualizacion = table.Column<DateTime>(nullable: false),
                     tipo_impuesto = table.Column<string>(nullable: true),
-                    estado = table.Column<bool>(nullable: false),
-                    codigo_categoriaId = table.Column<int>(nullable: true),
+                    Activo = table.Column<bool>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false),
                     referencia_interna = table.Column<string>(nullable: true),
                     referencia_suplidor = table.Column<string>(nullable: true),
                     foto = table.Column<string>(nullable: true),
@@ -371,10 +383,10 @@ namespace api.Migrations
                     modificar_precio = table.Column<bool>(nullable: false),
                     acepta_descuento = table.Column<bool>(nullable: false),
                     detalle = table.Column<string>(nullable: true),
-                    codigo_marcaId = table.Column<int>(nullable: true),
+                    BrandId = table.Column<int>(nullable: false),
                     porciento_beneficio = table.Column<int>(nullable: false),
                     porciento_minimo = table.Column<int>(nullable: false),
-                    modeloId = table.Column<int>(nullable: true),
+                    ModelId = table.Column<int>(nullable: false),
                     codigo = table.Column<string>(nullable: true),
                     garantia = table.Column<int>(nullable: false)
                 },
@@ -382,27 +394,27 @@ namespace api.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Categories_codigo_categoriaId",
-                        column: x => x.codigo_categoriaId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Products_Brands_codigo_marcaId",
-                        column: x => x.codigo_marcaId,
+                        name: "FK_Products_Brands_BrandId",
+                        column: x => x.BrandId,
                         principalTable: "Brands",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Products_Providers_codigo_suplidorId",
-                        column: x => x.codigo_suplidorId,
-                        principalTable: "Providers",
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Products_Models_modeloId",
-                        column: x => x.modeloId,
+                        name: "FK_Products_Models_ModelId",
+                        column: x => x.ModelId,
                         principalTable: "Models",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Providers_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "Providers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -411,23 +423,23 @@ namespace api.Migrations
                 name: "Inventories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    IdProductoId = table.Column<int>(nullable: true),
+                    Id = table.Column<string>(nullable: false),
+                    ProductId = table.Column<int>(nullable: false),
                     PrecioCompra = table.Column<decimal>(nullable: false),
                     Ganancia = table.Column<decimal>(nullable: false),
+                    Itbis = table.Column<decimal>(nullable: false),
                     PrecioVenta = table.Column<decimal>(nullable: false),
-                    Descuento = table.Column<decimal>(nullable: false),
                     PorcientoDescuento = table.Column<decimal>(nullable: false),
                     Cantidad = table.Column<int>(nullable: false),
+                    OrderNumber = table.Column<string>(nullable: true),
                     Fecha = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Inventories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Inventories_Products_IdProductoId",
-                        column: x => x.IdProductoId,
+                        name: "FK_Inventories_Products_ProductId",
+                        column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -439,27 +451,34 @@ namespace api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    codigo_articuloId = table.Column<int>(nullable: true),
+                    codigo_articulo = table.Column<int>(nullable: false),
                     cantidad = table.Column<int>(nullable: false),
-                    precio = table.Column<decimal>(nullable: false),
+                    OrderID = table.Column<int>(nullable: true),
+                    PrecioVenta = table.Column<decimal>(nullable: false),
+                    idInventario = table.Column<string>(nullable: true),
                     itbis = table.Column<decimal>(nullable: false),
-                    IdInventario = table.Column<int>(nullable: false),
                     referencia = table.Column<string>(nullable: true),
-                    OrderId = table.Column<int>(nullable: true)
+                    idFactura = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Order_Details", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Order_Details_Orders_OrderId",
-                        column: x => x.OrderId,
+                        name: "FK_Order_Details_Orders_OrderID",
+                        column: x => x.OrderID,
                         principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Order_Details_Products_codigo_articuloId",
-                        column: x => x.codigo_articuloId,
+                        name: "FK_Order_Details_Products_codigo_articulo",
+                        column: x => x.codigo_articulo,
                         principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Order_Details_Inventories_idInventario",
+                        column: x => x.idInventario,
+                        principalTable: "Inventories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -513,8 +532,7 @@ namespace api.Migrations
                 name: "IX_Categories_nombre",
                 table: "Categories",
                 column: "nombre",
-                unique: true,
-                filter: "[nombre] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_nombre_correo_identificacion",
@@ -524,9 +542,14 @@ namespace api.Migrations
                 filter: "[correo] IS NOT NULL AND [identificacion] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_IdProductoId",
+                name: "IX_Inventories_ProductId",
                 table: "Inventories",
-                column: "IdProductoId");
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Models_brandId",
+                table: "Models",
+                column: "brandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Models_nombre",
@@ -535,44 +558,61 @@ namespace api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_Details_OrderId",
+                name: "IX_Order_Details_OrderID",
                 table: "Order_Details",
-                column: "OrderId");
+                column: "OrderID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_Details_codigo_articuloId",
+                name: "IX_Order_Details_codigo_articulo",
                 table: "Order_Details",
-                column: "codigo_articuloId");
+                column: "codigo_articulo");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_codigoClienteId",
+                name: "IX_Order_Details_idInventario",
+                table: "Order_Details",
+                column: "idInventario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_OrderNumber",
                 table: "Orders",
-                column: "codigoClienteId");
+                column: "OrderNumber",
+                unique: true,
+                filter: "[OrderNumber] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Orders_usuario_registroId",
+                name: "IX_Orders_codigoCliente",
                 table: "Orders",
-                column: "usuario_registroId");
+                column: "codigoCliente");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_codigo_categoriaId",
-                table: "Products",
-                column: "codigo_categoriaId");
+                name: "IX_Orders_suplidor",
+                table: "Orders",
+                column: "suplidor");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_codigo_marcaId",
-                table: "Products",
-                column: "codigo_marcaId");
+                name: "IX_Orders_usuario_registro",
+                table: "Orders",
+                column: "usuario_registro");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_codigo_suplidorId",
+                name: "IX_Products_BrandId",
                 table: "Products",
-                column: "codigo_suplidorId");
+                column: "BrandId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_modeloId",
+                name: "IX_Products_CategoryId",
                 table: "Products",
-                column: "modeloId");
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ModelId",
+                table: "Products",
+                column: "ModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_ProviderId",
+                table: "Products",
+                column: "ProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_nombre",
@@ -587,14 +627,14 @@ namespace api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repairs_codigoClienteId",
+                name: "IX_Repairs_codigoCliente",
                 table: "Repairs",
-                column: "codigoClienteId");
+                column: "codigoCliente");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repairs_resgistradoPorId",
+                name: "IX_Repairs_resgistradoPor",
                 table: "Repairs",
-                column: "resgistradoPorId");
+                column: "resgistradoPor");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -618,9 +658,6 @@ namespace api.Migrations
                 name: "Configurations");
 
             migrationBuilder.DropTable(
-                name: "Inventories");
-
-            migrationBuilder.DropTable(
                 name: "Order_Details");
 
             migrationBuilder.DropTable(
@@ -633,7 +670,7 @@ namespace api.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
                 name: "Clients");
@@ -642,16 +679,19 @@ namespace api.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Brands");
+                name: "Models");
 
             migrationBuilder.DropTable(
                 name: "Providers");
 
             migrationBuilder.DropTable(
-                name: "Models");
+                name: "Brands");
         }
     }
 }

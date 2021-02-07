@@ -10,7 +10,9 @@ namespace api.Helper
 {
     public interface IUserHelper
     {
-        Task<User> GetUserAsync(string email);
+        Task<User> GetUserAsync(string userName);
+        Task<User> GetUserByEmailAsync(string email);
+        
 
         Task<IdentityResult> AddUserAsync(User user, string password);
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api.Entities
 {
@@ -8,6 +9,8 @@ namespace api.Entities
         [MaxLength(50)]
         [Required]
         public string nombre { get; set; }
-        public int marca { get; set; }
+        public int brandId { get; set; }
+        [ForeignKey("brandId")]
+        public Brand Brand { get; set; }
     }
 }
