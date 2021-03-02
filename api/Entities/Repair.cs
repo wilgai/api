@@ -22,6 +22,7 @@ namespace api.Entities
         public decimal total { get; set; }
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd hh:mm}")]
         public DateTime fecha { get; set; }
+        public string FechaLocal => fecha.ToLocalTime().ToString("dd-MM-yyy HH:mm tt");
         public string estado { get; set; }
         public string categoria { get; set; }
         [Required]
@@ -35,9 +36,10 @@ namespace api.Entities
         public string fallaTecnica { get; set; }
         public decimal costoPieza { get; set; }
         public string repuesto { get; set; }
+
+        public decimal TotalReparacion => total + costoPieza;
         [NotMapped]
         public List<Order_Detail> DeletedOrderItemIDs { get; set; }
-        [NotMapped]
         public List<Order_Detail> Order_Details { get; set; }
     }
 }

@@ -48,7 +48,7 @@ namespace api.API.Controllers
                 List<Order> orders = await _context.Orders
                  .Include(o => o.User)
                  .Include(c => c.Client)
-                 .Where(o => o.tipoDocumento == "Factura")
+                 .Where(o => o.tipoDocumento == "Factura" || o.tipoDocumento == "Reparacion")
                  .OrderByDescending(o => o.fecha)
                  .ToListAsync();
                 var results = new
@@ -170,7 +170,7 @@ namespace api.API.Controllers
                             itbis = item.itbis,
                             idInventario = item.idInventario,
                             referencia = item.referencia,
-                            idFactura = item.idFactura
+                            idFactura = request.OrderNumber
 
                         });
 
@@ -193,7 +193,7 @@ namespace api.API.Controllers
                             itbis = item.itbis,
                             idInventario = item.idInventario,
                             referencia = item.referencia,
-                            idFactura = item.idFactura
+                            idFactura = request.OrderNumber
                         });
                         //Inserting into inventory
                         Inventory inventory = new Inventory
@@ -206,7 +206,7 @@ namespace api.API.Controllers
                             PorcientoDescuento = item.PorcientoDescuento,
                             Cantidad = item.cantidad,
                             Fecha = DateTime.UtcNow,
-                            OrderNumber = item.idFactura
+                            OrderNumber = request.OrderNumber
                         };
                         _context.Inventories.Add(inventory);
 
@@ -240,8 +240,8 @@ namespace api.API.Controllers
 
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> EditOrder(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> EditOrder(string id)
         {
             try
             {
@@ -249,7 +249,8 @@ namespace api.API.Controllers
                               from u in _context.Users.Where(x => x.Id == o.usuario_registro)
                               from c in _context.Clients.Where(x => x.Id == o.codigoCliente).DefaultIfEmpty()
                               from p in _context.Providers.Where(x => x.Id == o.suplidor).DefaultIfEmpty()
-                              where o.Id == id
+                              from r in _context.Repairs
+                              where o.OrderNumber == id
                               select new
                               {
                                   o.Id,
@@ -273,13 +274,19 @@ namespace api.API.Controllers
                                   o.ValorVenta,
                                   u.FullName,
                                   customerName = c.nombre,
-                                  providerName = p.nombre
+                                  c.celular,
+                                  providerName = p.nombre,
+                                  r.repuesto,
+                                  r.equipo,
+                                  r.total
+
+
                               }).ToList();
 
                 var Order_Details = (from d in _context.Order_Details.AsNoTracking()
-                                     join p in _context.Products on d.codigo_articulo equals p.Id
-                                     join i in _context.Inventories on d.idInventario equals i.Id
-                                     where d.OrderID == id
+                                     from p in _context.Products.Where(x => x.Id == d.codigo_articulo).DefaultIfEmpty()
+                                     from i in _context.Inventories.Where(x => x.Id ==d.idInventario).DefaultIfEmpty()
+                                     where d.idFactura == id
                                      select new
                                      {
                                          d.cantidad,
@@ -289,13 +296,13 @@ namespace api.API.Controllers
                                          d.idInventario,
                                          d.itbis,
                                          d.PorcientoDescuento,
-
-                                         d.PrecioVenta,
                                          d.referencia,
+                                         d.PrecioVenta,
                                          d.Total,
                                          d.totalCompra,
                                          d.totalVenta,
                                          p.nombre,
+                                         p.garantia,
                                          PrecioV = i.PrecioVenta,
                                          i.PrecioCompra,
                                          Cant = i.Cantidad
@@ -349,7 +356,7 @@ namespace api.API.Controllers
                 var orderToEdit = _context.Orders.FirstOrDefault(o => o.Id == request.Id);
                 if (orderToEdit != null)
                 {
-                    orderToEdit.fecha = DateTime.UtcNow;
+                    
                     orderToEdit.User = user;
                     orderToEdit.tipoDocumento = request.tipoDocumento;
                     orderToEdit.Client = await _context.Clients.FindAsync(request.codigoCliente);
@@ -398,7 +405,7 @@ namespace api.API.Controllers
                                 itbis = item.itbis,
                                 idInventario = item.idInventario,
                                 referencia = item.referencia,
-                                idFactura = item.idFactura
+                                idFactura = request.OrderNumber
 
                             });
                             //Reduce the qty in inventory
@@ -412,7 +419,9 @@ namespace api.API.Controllers
                             //Getting the qty for the previous order
                             var DetailForthisItem = _context.Order_Details.Single(o => o.Id == item.Id);
                             int cantForThePreViousOrder = DetailForthisItem.cantidad;
-                            
+                            int oldProductId = DetailForthisItem.codigo_articulo;
+                            string inventoryIdForTheProduct = DetailForthisItem.idInventario;
+
 
                             //updating the record with the new information
                             var orderDetailsToEdit = _context.Order_Details.Single(o => o.Id == item.Id);
@@ -425,13 +434,27 @@ namespace api.API.Controllers
                                 orderDetailsToEdit.idInventario = item.idInventario;
                                 orderDetailsToEdit.referencia = item.referencia;
                             }
-                            //Updateting the inventory with new qty inserted
 
-                            var oldInv = _context.Inventories.Single(i => i.Id == item.idInventario);
-                            oldInv.Cantidad += cantForThePreViousOrder;
+                            if(item.codigo_articulo==oldProductId)
+                            {
+                                //Updateting the inventory with new qty inserted
+                                var oldInv = _context.Inventories.Single(i => i.Id == item.idInventario);
+                                oldInv.Cantidad += cantForThePreViousOrder;
 
-                            var newInv = _context.Inventories.Single(i => i.Id == item.idInventario);
-                            newInv.Cantidad -= item.cantidad;
+                                var newInv = _context.Inventories.Single(i => i.Id == item.idInventario);
+                                newInv.Cantidad -= item.cantidad;
+
+                            }
+                            else
+                            {
+                                var oldInv = _context.Inventories.Single(i => i.Id == inventoryIdForTheProduct);
+                                oldInv.Cantidad += cantForThePreViousOrder;
+
+                                var newInv = _context.Inventories.Single(i => i.Id == item.idInventario && i.ProductId==item.codigo_articulo );
+                                newInv.Cantidad -= item.cantidad;
+
+                            }
+                          
 
                         }
                     }
@@ -453,7 +476,7 @@ namespace api.API.Controllers
                                 itbis = item.itbis,
                                 idInventario = idInv,
                                 referencia = item.referencia,
-                                idFactura = item.idFactura
+                                idFactura = request.OrderNumber
 
                             });
 
@@ -577,6 +600,8 @@ namespace api.API.Controllers
 
 
         }
+
+        
 
 
 

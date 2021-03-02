@@ -10,8 +10,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210206131300_InitalDb")]
-    partial class InitalDb
+    [Migration("20210209010428_InitialDb")]
+    partial class InitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -247,6 +247,8 @@ namespace api.Migrations
 
                     b.Property<decimal>("PrecioVenta");
 
+                    b.Property<int?>("RepairId");
+
                     b.Property<int>("cantidad");
 
                     b.Property<int>("codigo_articulo");
@@ -262,6 +264,8 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderID");
+
+                    b.HasIndex("RepairId");
 
                     b.HasIndex("codigo_articulo");
 
@@ -643,6 +647,11 @@ namespace api.Migrations
                     b.HasOne("api.Entities.Order", "Order")
                         .WithMany("Order_Details")
                         .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("api.Entities.Repair", "Repair")
+                        .WithMany("Order_Details")
+                        .HasForeignKey("RepairId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("api.Entities.Product", "Product")

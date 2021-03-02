@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace api.Migrations
 {
-    public partial class InitalDb : Migration
+    public partial class InitialDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -454,6 +454,7 @@ namespace api.Migrations
                     codigo_articulo = table.Column<int>(nullable: false),
                     cantidad = table.Column<int>(nullable: false),
                     OrderID = table.Column<int>(nullable: true),
+                    RepairId = table.Column<int>(nullable: true),
                     PrecioVenta = table.Column<decimal>(nullable: false),
                     idInventario = table.Column<string>(nullable: true),
                     itbis = table.Column<decimal>(nullable: false),
@@ -467,6 +468,12 @@ namespace api.Migrations
                         name: "FK_Order_Details_Orders_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Order_Details_Repairs_RepairId",
+                        column: x => x.RepairId,
+                        principalTable: "Repairs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -561,6 +568,11 @@ namespace api.Migrations
                 name: "IX_Order_Details_OrderID",
                 table: "Order_Details",
                 column: "OrderID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_Details_RepairId",
+                table: "Order_Details",
+                column: "RepairId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_Details_codigo_articulo",
@@ -661,13 +673,13 @@ namespace api.Migrations
                 name: "Order_Details");
 
             migrationBuilder.DropTable(
-                name: "Repairs");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Repairs");
 
             migrationBuilder.DropTable(
                 name: "Inventories");

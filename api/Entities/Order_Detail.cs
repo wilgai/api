@@ -15,6 +15,8 @@ namespace api.Entities
         public int cantidad { get; set; }
         public Nullable<int> OrderID { get; set; }
         public virtual Order Order { get; set; }
+        public Nullable<int> RepairId { get; set; }
+        public virtual Repair Repair { get; set; }
         public decimal PrecioVenta { get; set; }
         public string   idInventario { get; set; }
         [ForeignKey("idInventario")]

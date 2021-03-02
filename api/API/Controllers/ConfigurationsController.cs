@@ -29,7 +29,7 @@ namespace api.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetConfiguration()
         {
            
 
@@ -56,50 +56,65 @@ namespace api.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response
-                {
-                    IsSuccess = false,
-                    Message = "Bad request",
-                    Result = ModelState
-                });
+                return Ok(new Response { IsSuccess = false, Message = "Informacion errónea." });
             }
             string email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
             User user = await _userHelper.GetUserAsync(email);
             if (user == null)
             {
-                return BadRequest(new Response
+                return Ok(new Response { IsSuccess = false, Message = "Usuario no tiene permiso." });
+            }
+            try
+            {
+                Configuration configuration = new Configuration
                 {
-                    IsSuccess = false,
-                    Message = "Bad request",
-                    Result = ModelState
-                });
-            }
-            Configuration configuration = new Configuration
-            {
-                empresa = request.empresa,
-                direccion = request.direccion,
-                telefono = request.telefono,
-                correo = request.correo,
-                celular = request.celular,
-                web = request.web,
-                whatsap = request.whatsap,
-                facebook = request.facebook,
-                instagram = request.instagram,
-                tiktok = request.tiktok,
-                logo = request.logo,
-                notaFactura = request.notaFactura,
-                notaOrdenDeServicio = request.notaOrdenDeServicio,
-                notaServicio = request.notaServicio,
-                instrucionOdenDeServicio = request.instrucionOdenDeServicio,
-                moneda = request.moneda,
-                notaCotizacionFactura = request.notaCotizacionFactura,
-                notaCotizacionReparacion = request.notaCotizacionReparacion,
-            };
-            if (request.Id == 0)
-            {
+                    empresa = request.empresa,
+                    direccion = request.direccion,
+                    telefono = request.telefono,
+                    correo = request.correo,
+                    celular = request.celular,
+                    web = request.web,
+                    whatsap = request.whatsap,
+                    facebook = request.facebook,
+                    instagram = request.instagram,
+                    tiktok = request.tiktok,
+                    logo = request.logo,
+                    notaFactura = request.notaFactura,
+                    notaOrdenDeServicio = request.notaOrdenDeServicio,
+                    notaServicio = request.notaServicio,
+                    instrucionOdenDeServicio = request.instrucionOdenDeServicio,
+                    moneda = request.moneda,
+                    notaCotizacionFactura = request.notaCotizacionFactura,
+                    notaCotizacionReparacion = request.notaCotizacionReparacion,
+                };
                 _context.Configurations.Add(configuration);
+                _context.SaveChanges();
+
+                return Ok(new Response { IsSuccess = true, Message = "Se ha guardo los cambios exitosamente." });
+
             }
-            else
+            catch(Exception exception)
+            {
+                return Ok(new Response { IsSuccess = false, Message = exception.Message });
+            }
+
+          
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditConfiguration([FromBody] Configuration request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Ok(new Response { IsSuccess = false, Message = "Informacion errónea." });
+            }
+            string email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            User user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                return Ok(new Response { IsSuccess = false, Message = "Usuario no tiene permiso." });
+            }
+            try
             {
                 var itemToEdit = _context.Configurations.Single(o => o.Id == request.Id);
                 if (itemToEdit != null)
@@ -123,21 +138,18 @@ namespace api.API.Controllers
                     itemToEdit.notaCotizacionFactura = request.notaCotizacionFactura;
                     itemToEdit.notaCotizacionReparacion = request.notaCotizacionReparacion;
                 }
+                _context.SaveChanges();
+
+                return Ok(new Response { IsSuccess = true, Message = "Se ha guardo los cambios exitosamente." });
 
             }
+            catch (Exception exception)
+            {
+                return Ok(new Response { IsSuccess = false, Message = exception.Message });
+            }
 
-            bool response = false;
-            var created = _context.SaveChanges();
-            if (created > 0)
-                response = true;
-            return Ok(response);
+
         }
-
-
-
-
-
-
 
     }
 }
