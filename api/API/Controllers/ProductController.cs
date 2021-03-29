@@ -87,6 +87,63 @@ namespace api.API.Controllers
             }
 
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(int id)
+        {
+            try
+            {
+
+                var products = (from p in _context.Products
+                                join b in _context.Brands on p.BrandId equals b.Id
+                                join c in _context.Categories on p.CategoryId equals c.Id
+                                join m in _context.Models on p.ModelId equals m.Id
+                                join s in _context.Providers on p.ProviderId equals s.Id
+                                where p.Activo && p.Id==id                            
+                                select new
+                                {
+                                    p.Id,
+                                    p.ModelId,
+                                    p.modificar_precio,
+                                    p.nombre,
+                                    nombre2 = p.nombre,
+                                    p.oferta,
+                                    p.porciento_beneficio,
+                                    p.porciento_minimo,
+                                    p.ProviderId,
+                                    p.referencia_interna,
+                                    p.referencia_suplidor,
+                                    p.tipo_impuesto,
+                                    p.usuario_registro,
+                                    p.acepta_descuento,
+                                    p.Activo,
+                                    p.BrandId,
+                                    p.CategoryId,
+                                    p.codigo,
+                                    p.detalle,
+                                    p.fecha_actualizacion,
+                                    p.fecha_registro,
+                                    p.foto,
+                                    p.garantia,
+                                    nombreSuplidor = s.nombre,
+                                    nombreCategoria = c.nombre,
+                                    nombreMarca = b.nombre,
+                                    nombreModelo = m.nombre
+                                }).ToList();
+                var results = new
+                {
+                    IsSuccess = true,
+                    products
+                };
+                return Ok(results);
+            }
+
+            catch (Exception exception)
+            {
+
+                return Ok(new Response { IsSuccess = false, Message = exception.Message });
+            }
+
+        }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]

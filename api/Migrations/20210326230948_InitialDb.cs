@@ -123,11 +123,30 @@ namespace api.Migrations
                     moneda = table.Column<string>(nullable: true),
                     direccion = table.Column<string>(nullable: true),
                     notaCotizacionFactura = table.Column<string>(nullable: true),
-                    notaCotizacionReparacion = table.Column<string>(nullable: true)
+                    notaCotizacionReparacion = table.Column<string>(nullable: true),
+                    tipoFactura = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Configurations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TotalPaid = table.Column<decimal>(nullable: false),
+                    orderID = table.Column<string>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    Reference = table.Column<string>(nullable: true),
+                    BillPaidWith = table.Column<decimal>(nullable: false),
+                    Change = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -453,6 +472,7 @@ namespace api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     codigo_articulo = table.Column<int>(nullable: false),
                     cantidad = table.Column<int>(nullable: false),
+                    descuento = table.Column<decimal>(nullable: false),
                     OrderID = table.Column<int>(nullable: true),
                     RepairId = table.Column<int>(nullable: true),
                     PrecioVenta = table.Column<decimal>(nullable: false),
@@ -671,6 +691,9 @@ namespace api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Order_Details");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

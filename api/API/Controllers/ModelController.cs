@@ -55,8 +55,40 @@ namespace api.API.Controllers
             }
 
         }
-         
-         
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetModelsById(int id)
+        {
+
+            try
+            {
+
+                var models = (from m in _context.Models
+                                join b in _context.Brands on m.brandId equals b.Id
+                                where m.Id == id
+                                select new
+                                {
+                                    m.Id,
+                                    m.brandId,
+                                    m.nombre,
+                                    nombreMarca=b.nombre
+                                }).ToList();
+                var results = new
+                {
+                    IsSuccess = true,
+                    models
+                };
+                return Ok(results);
+            }
+            catch (Exception exception)
+            {
+
+                return Ok(new Response { IsSuccess = false, Message = exception.Message });
+            }
+
+        }
+
+
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> PostModel([FromBody] Model request)

@@ -86,6 +86,7 @@ namespace api.API.Controllers
                     moneda = request.moneda,
                     notaCotizacionFactura = request.notaCotizacionFactura,
                     notaCotizacionReparacion = request.notaCotizacionReparacion,
+                    tipoFactura=request.tipoFactura
                 };
                 _context.Configurations.Add(configuration);
                 _context.SaveChanges();
@@ -137,6 +138,7 @@ namespace api.API.Controllers
                     itemToEdit.moneda = request.moneda;
                     itemToEdit.notaCotizacionFactura = request.notaCotizacionFactura;
                     itemToEdit.notaCotizacionReparacion = request.notaCotizacionReparacion;
+                    itemToEdit.tipoFactura = request.tipoFactura;
                 }
                 _context.SaveChanges();
 

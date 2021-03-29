@@ -123,6 +123,7 @@ namespace api.API.Controllers
                     {
                         Product = await _context.Products.FindAsync(item.codigo_articulo),
                         cantidad = item.cantidad,
+                        descuento = item.descuento,
                         PrecioVenta = item.PrecioVenta,
                         itbis = item.itbis,
                         idInventario = item.idInventario,
@@ -289,6 +290,7 @@ namespace api.API.Controllers
                     repairToEdit.fallaTecnica = request.fallaTecnica;
                     repairToEdit.costoPieza = request.costoPieza;
                     repairToEdit.repuesto = request.repuesto;
+                    repairToEdit.Order_Details = new List<Order_Detail>();
                 }
                 else
                 {
@@ -310,10 +312,11 @@ namespace api.API.Controllers
                     {
 
                         //Inserting into order Details
-                         repairToEdit.Order_Details.Add(new Order_Detail
+                        repairToEdit.Order_Details.Add(new Order_Detail
                         {
                             Product = await _context.Products.FindAsync(item.codigo_articulo),
                             cantidad = item.cantidad,
+                            descuento = item.descuento,
                             PrecioVenta = item.PrecioVenta,
                             itbis = item.itbis,
                             idInventario = item.idInventario,
@@ -321,11 +324,10 @@ namespace api.API.Controllers
                             idFactura = item.idFactura
 
                         });
+
                         //Reduce the qty in inventory
                         var inve = _context.Inventories.Single(i => i.Id == item.idInventario);
                         inve.Cantidad -= item.cantidad;
-
-
                     }
                     else if (item.Id > 0)
                     {
@@ -341,6 +343,7 @@ namespace api.API.Controllers
                         if (orderDetailsToEdit != null)
                         {
                             orderDetailsToEdit.cantidad = item.cantidad;
+                            orderDetailsToEdit.descuento = item.descuento;
                             orderDetailsToEdit.codigo_articulo = item.codigo_articulo;
                             orderDetailsToEdit.PrecioVenta = item.PrecioVenta;
                             orderDetailsToEdit.itbis = item.itbis;
@@ -439,7 +442,7 @@ namespace api.API.Controllers
                 currentRepair.fallaTecnica = request.fallaTecnica;
                 _context.Repairs.Update(currentRepair);
                 await _context.SaveChangesAsync();
-                return Ok(new Response { IsSuccess = true, Message = "Se ha cambiado los cambios exitosamente." });
+                return Ok(new Response { IsSuccess = true, Message = "Se ha registrado los cambios exitosamente." });
 
 
             }

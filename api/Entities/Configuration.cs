@@ -26,5 +26,6 @@ namespace api.Entities
         public string direccion { get; set; }
         public string notaCotizacionFactura { get; set; }
         public string notaCotizacionReparacion { get; set; }
+        public string tipoFactura { get; set; }
     }
 }

@@ -31,6 +31,7 @@ namespace api.Data
 
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

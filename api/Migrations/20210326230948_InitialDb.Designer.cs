@@ -10,7 +10,7 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210209010428_InitialDb")]
+    [Migration("20210326230948_InitialDb")]
     partial class InitialDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,8 @@ namespace api.Migrations
                     b.Property<string>("telefono");
 
                     b.Property<string>("tiktok");
+
+                    b.Property<string>("tipoFactura");
 
                     b.Property<string>("web");
 
@@ -253,6 +255,8 @@ namespace api.Migrations
 
                     b.Property<int>("codigo_articulo");
 
+                    b.Property<decimal>("descuento");
+
                     b.Property<string>("idFactura");
 
                     b.Property<string>("idInventario");
@@ -272,6 +276,29 @@ namespace api.Migrations
                     b.HasIndex("idInventario");
 
                     b.ToTable("Order_Details");
+                });
+
+            modelBuilder.Entity("api.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("BillPaidWith");
+
+                    b.Property<decimal>("Change");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Reference");
+
+                    b.Property<decimal>("TotalPaid");
+
+                    b.Property<string>("orderID");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("api.Entities.Product", b =>

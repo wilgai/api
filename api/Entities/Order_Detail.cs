@@ -13,6 +13,7 @@ namespace api.Entities
         [ForeignKey("codigo_articulo")]
         public Product Product { get; set; }
         public int cantidad { get; set; }
+        public decimal descuento { get; set; }
         public Nullable<int> OrderID { get; set; }
         public virtual Order Order { get; set; }
         public Nullable<int> RepairId { get; set; }
@@ -31,6 +32,8 @@ namespace api.Entities
         public decimal Total => cantidad * PrecioVenta;
         [NotMapped]
         public decimal Ganancia { get; set; }
+        [NotMapped]
+        public int garantia { get; set; }
         [NotMapped]
         public decimal PorcientoDescuento { get; set; }
 
