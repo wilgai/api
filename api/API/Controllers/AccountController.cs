@@ -315,8 +315,6 @@ namespace api.API.Controllers
             {
                 return Ok(new Response { IsSuccess = true, Message = "Se ha cancelado el usuario con exito." });
             }
-
-
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -354,18 +352,6 @@ namespace api.API.Controllers
 
             return Ok(new Response { IsSuccess = true });
         }
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
 }
